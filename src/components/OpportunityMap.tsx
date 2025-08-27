@@ -53,7 +53,7 @@ const OpportunityMap: React.FC<OpportunityMapProps> = ({ opportunities }) => {
           </div>
           <div className="flex items-center space-x-1">
             <div className="w-3 h-3 bg-muted rounded-full"></div>
-            <span>Lower fit (<60%)</span>
+            <span>Lower fit (&lt;60%)</span>
           </div>
         </div>
       </div>

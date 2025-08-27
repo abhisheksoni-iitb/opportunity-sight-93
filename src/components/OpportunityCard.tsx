@@ -18,8 +18,10 @@ import {
   Award,
   Bookmark,
   MessageSquare,
-  Users
+  Users,
+  Bot
 } from 'lucide-react';
+import OpportunityChat from './OpportunityChat';
 
 interface OpportunityData {
   rec_id: string;
@@ -39,9 +41,11 @@ interface OpportunityData {
 interface OpportunityCardProps {
   opportunity: OpportunityData;
   onAction: (action: string) => void;
+  userId?: string;
 }
 
-const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, onAction }) => {
+const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, onAction, userId = '00000000-0000-0000-0000-000000000001' }) => {
+  const [showChat, setShowChat] = useState(false);
   const getFitScoreColor = (score: number) => {
     if (score >= 80) return 'text-success';
     if (score >= 60) return 'text-warning';
@@ -114,7 +118,7 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, onAction
                   View Details
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+               <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-xl">
                     {opportunity.product_category}
@@ -243,9 +247,19 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, onAction
                     <Users className="w-4 h-4 mr-2" />
                     View Suppliers
                   </Button>
-                </div>
-              </DialogContent>
+                 </div>
+               </DialogContent>
             </Dialog>
+
+            <Button
+              onClick={() => setShowChat(true)}
+              size="sm"
+              variant="outline"
+              className="text-xs h-8 px-3"
+            >
+              <Bot className="w-3 h-3 mr-1" />
+              Ask KeyAI
+            </Button>
 
             <Button
               onClick={() => onAction('save')}
@@ -258,6 +272,13 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, onAction
           </div>
         </div>
       </CardContent>
+
+      <OpportunityChat
+        isOpen={showChat}
+        onClose={() => setShowChat(false)}
+        opportunity={opportunity}
+        userId={userId}
+      />
     </Card>
   );
 };

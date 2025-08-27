@@ -15,6 +15,7 @@ import {
 import OpportunityMap from '@/components/OpportunityMap';
 import OpportunityCard from '@/components/OpportunityCard';
 import ProfileForm from '@/components/ProfileForm';
+import TrendChat from '@/components/TrendChat';
 import TrendExplorer from '@/components/TrendExplorer';
 
 interface UserProfile {
@@ -179,6 +180,12 @@ const Dashboard = () => {
               >
                 Trend Explorer
               </TabsTrigger>
+              <TabsTrigger 
+                value="profile"
+                className="px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                Profile & Docs
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -278,7 +285,8 @@ const Dashboard = () => {
                             <OpportunityCard
                               key={opportunity.rec_id}
                               opportunity={opportunity}
-                              onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
+                               userId={DEMO_USER_ID}
+                               onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
                             />
                           ))}
                         
@@ -297,7 +305,55 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="trends" className="space-y-6">
-            <TrendExplorer onEvent={logEvent} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <TrendChat userId={DEMO_USER_ID} userLocation={userProfile?.location} />
+              <TrendExplorer onEvent={logEvent} />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="profile" className="space-y-6">
+            <div className="max-w-2xl mx-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center space-x-2">
+                    <User className="w-6 h-6 text-primary" />
+                    <span>Your Profile & Documents</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Manage your company profile and documentation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <ProfileForm 
+                    profile={userProfile}
+                    loading={profileLoading}
+                    onUpdate={(updatedProfile) => {
+                      if (updatedProfile) {
+                        handleProfileUpdate(updatedProfile);
+                      } else {
+                        generateRecommendations();
+                      }
+                    }}
+                  />
+                  
+                  <div className="pt-6 border-t border-border">
+                    <h3 className="text-lg font-medium mb-4">Documents</h3>
+                    <div className="text-center py-8 bg-muted/20 rounded-lg border-2 border-dashed border-border">
+                      <div className="space-y-3">
+                        <div className="text-4xl">📁</div>
+                        <div className="space-y-1">
+                          <h4 className="font-medium text-foreground">Document Management</h4>
+                          <p className="text-sm text-muted-foreground">Coming Soon</p>
+                        </div>
+                        <Button variant="outline" disabled>
+                          Add Document
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

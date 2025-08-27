@@ -21,17 +21,34 @@ interface TrendChatProps {
 }
 
 const sampleQueries = [
-  "What's trending in organic beverages in my area?",
+  "What's trending in organic beverages in the USA?",
   "Suggest trending categories for a small setup with low budget",
   "What are best new products for my certifications?",
-  "Who are the top buyers for energy drinks in Chicago?"
+  "Who are the top buyers for energy drinks in New York?"
 ];
 
 const TrendChat: React.FC<TrendChatProps> = ({ userId, userLocation }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    // Load from session storage on init
+    try {
+      const saved = sessionStorage.getItem('trendchat-messages');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Save to session storage whenever messages change
+  React.useEffect(() => {
+    try {
+      sessionStorage.setItem('trendchat-messages', JSON.stringify(messages));
+    } catch (error) {
+      console.error('Failed to save chat history:', error);
+    }
+  }, [messages]);
 
   const handleSendMessage = async (query?: string) => {
     const messageText = query || inputValue.trim();
@@ -140,10 +157,10 @@ const TrendChat: React.FC<TrendChatProps> = ({ userId, userLocation }) => {
                     ) : (
                       <User className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
                     )}
-                    <div className="flex-1 space-y-2">
-                      <div className="text-sm text-foreground whitespace-pre-wrap">
-                        {message.content}
-                      </div>
+                     <div className="flex-1 space-y-2">
+                       <div className="text-sm text-foreground whitespace-pre-wrap break-words max-w-full overflow-hidden">
+                         {message.content}
+                       </div>
                       {message.role === 'assistant' && (
                         <div className="flex space-x-2">
                           <Button

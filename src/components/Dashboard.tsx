@@ -147,21 +147,40 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 space-y-6 max-w-7xl">
         {/* Header */}
-        <div className="flex items-center justify-between py-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Market Navigator
-            </h1>
-            <p className="text-muted-foreground">
-              Discover personalized market opportunities and explore industry trends
-            </p>
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-2xl border border-primary/20 py-8 px-6 mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-60"></div>
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-8 bg-gradient-to-b from-primary to-primary-deep rounded-full"></div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-deep bg-clip-text text-transparent">
+                  Market Navigator
+                </h1>
+              </div>
+              <p className="text-lg text-muted-foreground ml-5">
+                AI-powered market intelligence & opportunity discovery platform
+              </p>
+              <div className="flex items-center space-x-4 ml-5 pt-2">
+                <Badge variant="outline" className="bg-background/50 backdrop-blur-sm">
+                  🎯 Personalized Insights
+                </Badge>
+                <Badge variant="outline" className="bg-background/50 backdrop-blur-sm">
+                  📈 Real-time Trends
+                </Badge>
+                <Badge variant="outline" className="bg-background/50 backdrop-blur-sm">
+                  🤖 KeyAI Powered
+                </Badge>
+              </div>
+            </div>
+            <Button
+              onClick={() => setActiveTab('opportunities')}
+              size="lg"
+              className="bg-primary hover:bg-primary-deep text-primary-foreground font-medium px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Target className="w-5 h-5 mr-2" />
+              Explore Opportunities
+            </Button>
           </div>
-          <Button
-            onClick={() => setActiveTab('opportunities')}
-            className="bg-primary hover:bg-primary-deep text-primary-foreground font-medium"
-          >
-            Explore Opportunities
-          </Button>
         </div>
 
         {/* Tabs */}
@@ -190,34 +209,7 @@ const Dashboard = () => {
           </div>
 
           <TabsContent value="opportunities" className="space-y-6 mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Profile Section - Sidebar */}
-              <div className="lg:col-span-1">
-                <Card className="sticky top-6">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center space-x-2">
-                      <User className="w-5 h-5 text-primary" />
-                      <span>Your Profile</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <ProfileForm 
-                      profile={userProfile}
-                      loading={profileLoading}
-                      onUpdate={(updatedProfile) => {
-                        if (updatedProfile) {
-                          handleProfileUpdate(updatedProfile);
-                        } else {
-                          generateRecommendations();
-                        }
-                      }}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Main Content Area */}
-              <div className="lg:col-span-3 space-y-6">
+            <div className="space-y-6">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-3 gap-4">
                   <Card className="border-primary/20">
@@ -280,7 +272,6 @@ const Dashboard = () => {
                       <div className="space-y-3 max-h-80 overflow-y-auto">
                         {opportunities
                           .sort((a, b) => b.fit_score - a.fit_score)
-                          .slice(0, 8)
                           .map((opportunity) => (
                             <OpportunityCard
                               key={opportunity.rec_id}
@@ -300,7 +291,6 @@ const Dashboard = () => {
                     </CardContent>
                   </Card>
                 </div>
-              </div>
             </div>
           </TabsContent>
 

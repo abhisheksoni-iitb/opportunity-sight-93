@@ -179,10 +179,10 @@ const OpportunityChat: React.FC<OpportunityChatProps> = ({
                       ) : (
                         <User className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
                       )}
-                      <div className="flex-1 space-y-2">
-                        <div className="text-sm text-foreground whitespace-pre-wrap">
-                          {message.content}
-                        </div>
+                       <div className="flex-1 space-y-2">
+                         <div className="text-sm text-foreground whitespace-pre-wrap break-words max-w-full overflow-hidden">
+                           {message.content}
+                         </div>
                         {message.role === 'assistant' && (
                           <div className="flex space-x-2">
                             <Button

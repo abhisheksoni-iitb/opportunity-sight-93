@@ -186,7 +186,7 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
                 id="location"
                 value={formData.location}
                 onChange={(e) => handleInputChange('location', e.target.value)}
-                placeholder="e.g., Mumbai, Bengaluru"
+                placeholder="e.g., New York, California, Texas"
               />
             </div>
 
@@ -196,7 +196,7 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
                 id="budget"
                 value={formData.budget}
                 onChange={(e) => handleInputChange('budget', e.target.value)}
-                placeholder="e.g., ₹10L - ₹50L"
+                placeholder="e.g., $100K - $500K"
               />
             </div>
 
@@ -226,7 +226,7 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
                 id="target_brands"
                 value={formData.target_brands}
                 onChange={(e) => handleInputChange('target_brands', e.target.value)}
-                placeholder="e.g., Amazon, Flipkart"
+                placeholder="e.g., Amazon, Walmart, Target"
               />
             </div>
 
@@ -236,7 +236,7 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
                 id="industries"
                 value={formData.industries}
                 onChange={(e) => handleInputChange('industries', e.target.value)}
-                placeholder="e.g., E-commerce, Healthcare"
+                placeholder="e.g., E-commerce, Healthcare, Manufacturing"
               />
             </div>
 
@@ -248,7 +248,7 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
                 id="query_text"
                 value={formData.query_text}
                 onChange={(e) => handleInputChange('query_text', e.target.value)}
-                placeholder="e.g., What's next in sustainable manufacturing for small-scale producers in India?"
+                placeholder="e.g., What's next in sustainable manufacturing for small-scale producers in the USA?"
                 rows={4}
               />
             </div>
@@ -378,19 +378,28 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
         )}
 
         {opportunities.length === 0 && !loading && (
-          <Card>
+          <Card className="bg-gradient-to-br from-primary/5 via-transparent to-primary/10 border-primary/20">
             <CardContent className="p-12 text-center">
-              <Sparkles className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-40" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                Ready to Explore Market Trends?
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent rounded-full blur-3xl"></div>
+                <Sparkles className="relative w-20 h-20 mx-auto mb-6 text-primary animate-pulse" />
+              </div>
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-deep bg-clip-text text-transparent mb-3">
+                🚀 Ready to Explore Market Trends?
               </h3>
-              <p className="text-muted-foreground mb-6">
-                Use AI to discover emerging opportunities tailored to your business capabilities and market interests.
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+                Unleash the power of AI to discover emerging opportunities perfectly tailored to your business capabilities and market interests. Get actionable insights in seconds.
               </p>
-              <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="outline">AI-Powered Analysis</Badge>
-                <Badge variant="outline">Real-time Insights</Badge>
-                <Badge variant="outline">Actionable Steps</Badge>
+              <div className="flex flex-wrap justify-center gap-3 mb-6">
+                <Badge variant="outline" className="px-4 py-2 bg-background/50 backdrop-blur-sm">
+                  🤖 AI-Powered Analysis
+                </Badge>
+                <Badge variant="outline" className="px-4 py-2 bg-background/50 backdrop-blur-sm">
+                  📊 Real-time Insights
+                </Badge>
+                <Badge variant="outline" className="px-4 py-2 bg-background/50 backdrop-blur-sm">
+                  ⚡ Actionable Steps
+                </Badge>
               </div>
             </CardContent>
           </Card>

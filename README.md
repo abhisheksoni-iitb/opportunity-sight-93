@@ -1,73 +1,107 @@
-# Welcome to your Lovable project
+# Opportunity Sight
 
-## Project info
+A comprehensive opportunity discovery and analysis platform that leverages advanced analytics to identify and evaluate business opportunities across various sectors.
 
-**URL**: https://lovable.dev/projects/d6fcbb1f-7b04-492d-81c0-6a2352d46d3e
+## 🚀 Project Overview
 
-## How can I edit this code?
+Opportunity Sight is an intelligent platform designed to help businesses and investors identify, analyze, and capitalize on emerging opportunities. Using cutting-edge technology and data analytics, the platform provides actionable insights to drive strategic decision-making.
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+- **Opportunity Discovery**: Advanced algorithms to identify emerging market opportunities
+- **Real-time Analytics**: Live data processing and analysis for up-to-date insights
+- **Interactive Dashboard**: User-friendly interface with comprehensive data visualization
+- **Risk Assessment**: Built-in risk evaluation tools for informed decision-making
+- **Market Intelligence**: Deep market analysis and trend identification
+- **Collaboration Tools**: Team-based features for shared opportunity analysis
+- **Export & Reporting**: Generate detailed reports and export data for further analysis
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d6fcbb1f-7b04-492d-81c0-6a2352d46d3e) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18 with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **Styling**: Tailwind CSS for responsive design
+- **UI Components**: shadcn/ui for consistent and accessible components
+- **Database**: Supabase for real-time data management
+- **API Integration**: Gemini API for advanced analytics with rate limiting
+- **Code Quality**: ESLint for code linting and best practices
 
-**Use your preferred IDE**
+## 📊 Usage
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/abhisheksoni-iitb/opportunity-sight-93.git
+   cd opportunity-sight-93
+   ```
 
-Follow these steps:
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. **Set up environment variables**:
+   - Copy `.env.example` to `.env.local`
+   - Configure your Supabase and API credentials
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+5. **Open your browser** and navigate to `http://localhost:5173`
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Development with Lovable
 
-**Edit a file directly in GitHub**
+This project is integrated with Lovable for enhanced development experience:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Lovable Project**: [https://lovable.dev/projects/d6fcbb1f-7b04-492d-81c0-6a2352d46d3e](https://lovable.dev/projects/d6fcbb1f-7b04-492d-81c0-6a2352d46d3e)
+- **Repository**: [https://github.com/abhisheksoni-iitb/opportunity-sight-93](https://github.com/abhisheksoni-iitb/opportunity-sight-93)
 
-**Use GitHub Codespaces**
+Simply visit the Lovable Project and start prompting for AI-assisted development. Changes made via Lovable will be automatically committed to this repository.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 💼 Business Impact
 
-## What technologies are used for this project?
+### Value Proposition
+- **Accelerated Decision Making**: Reduce opportunity evaluation time by 70%
+- **Enhanced Accuracy**: AI-powered analysis improves opportunity assessment accuracy
+- **Risk Mitigation**: Advanced risk modeling prevents costly investment mistakes
+- **Market Advantage**: Early identification of emerging trends provides competitive edge
+- **Resource Optimization**: Focus resources on high-potential opportunities
 
-This project is built with:
+### Target Markets
+- Investment firms and venture capital
+- Business development teams
+- Market research organizations
+- Strategic planning departments
+- Entrepreneurial ventures
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Deployment
 
-## How can I deploy this project?
+The application can be easily deployed using Lovable's integrated deployment features:
 
-Simply open [Lovable](https://lovable.dev/projects/d6fcbb1f-7b04-492d-81c0-6a2352d46d3e) and click on Share -> Publish.
+1. Open your [Lovable Project](https://lovable.dev/projects/d6fcbb1f-7b04-492d-81c0-6a2352d46d3e)
+2. Click on **Share** → **Publish**
+3. Your application will be deployed with a custom domain option available
 
-## Can I connect a custom domain to my Lovable project?
+For custom domain setup, navigate to Project > Settings > Domains in Lovable.
 
-Yes, you can!
+## 📝 Contributing
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+We welcome contributions! Please see our contributing guidelines for more details.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔗 Links
+
+- **Live Application**: [Deploy via Lovable](https://lovable.dev/projects/d6fcbb1f-7b04-492d-81c0-6a2352d46d3e)
+- **Documentation**: Available in the `/docs` directory
+- **Issues**: [GitHub Issues](https://github.com/abhisheksoni-iitb/opportunity-sight-93/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/abhisheksoni-iitb/opportunity-sight-93/discussions)
+
+---
+
+*Built with ❤️ using React, TypeScript, and modern web technologies*

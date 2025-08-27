@@ -196,7 +196,14 @@ const Dashboard = () => {
                   <CardContent className="pt-0">
                     <ProfileForm 
                       profile={userProfile}
-                      onGenerateRecommendations={() => generateRecommendations()}
+                      loading={profileLoading}
+                      onUpdate={(updatedProfile) => {
+                        if (updatedProfile) {
+                          handleProfileUpdate(updatedProfile);
+                        } else {
+                          generateRecommendations();
+                        }
+                      }}
                     />
                   </CardContent>
                 </Card>

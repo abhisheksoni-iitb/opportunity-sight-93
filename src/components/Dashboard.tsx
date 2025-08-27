@@ -13,7 +13,8 @@ import {
   User
 } from 'lucide-react';
 import OpportunityMap from '@/components/OpportunityMap';
-import OpportunityCard from '@/components/OpportunityCard';
+import LocationOpportunityCard from '@/components/LocationOpportunityCard';
+import UserOpportunityCard from '@/components/UserOpportunityCard';
 import ProfileForm from '@/components/ProfileForm';
 import TrendChat from '@/components/TrendChat';
 import TrendExplorer from '@/components/TrendExplorer';
@@ -29,25 +30,40 @@ interface UserProfile {
   interests: string[];
 }
 
-interface OpportunityData {
-  rec_id: string;
-  trend_id: string;
+interface LocationOpportunity {
+  rec_id: number;
+  location: string;
+  trending_categories: string;
+  top_brands: string;
+  avg_monthly_demand: number;
+  peak_season: string;
+  competition_level: string;
+  suggested_skus: string;
+  why_trending: string;
+  last_updated: string;
+}
+
+interface UserOpportunity {
+  rec_id: number;
+  user_id: number;
+  recommended_category: string;
+  specific_sku: string;
   fit_score: number;
-  reasoning: string;
-  setup_requirements: any;
-  product_category: string;
-  geography: any;
-  demand_score: number;
-  market_size: number;
-  avg_price: number;
-  trending_brands: string[];
-  supplier_density: number;
+  projected_monthly_demand: number;
+  top_competing_brands: string;
+  expected_roi_pct: number;
+  why_fit: string;
+  action_priority: string;
+  confidence: number;
+  required_certifications: string;
+  last_recommended: string;
 }
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('opportunities');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [opportunities, setOpportunities] = useState<OpportunityData[]>([]);
+  const [locationOpportunities, setLocationOpportunities] = useState<LocationOpportunity[]>([]);
+  const [userOpportunities, setUserOpportunities] = useState<UserOpportunity[]>([]);
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const { toast } = useToast();
@@ -57,6 +73,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadUserProfile();
+    loadRecommendations();
   }, []);
 
   const loadUserProfile = async () => {
@@ -72,8 +89,6 @@ const Dashboard = () => {
       
       if (data) {
         setUserProfile(data);
-        // Auto-generate recommendations
-        await generateRecommendations(data);
       }
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -87,35 +102,36 @@ const Dashboard = () => {
     }
   };
 
-  const generateRecommendations = async (profile?: UserProfile) => {
+  const loadRecommendations = async () => {
     setLoading(true);
     try {
-      const response = await supabase.functions.invoke('generate-recommendations', {
-        body: { 
-          user_id: DEMO_USER_ID,
-          overrides: profile ? {
-            location: profile.location,
-            processes: profile.processes,
-            certifications: profile.certifications,
-            current_products: profile.current_products,
-            capacity: profile.capacity,
-            interests: profile.interests
-          } : undefined
-        }
-      });
+      // Load location opportunities
+      const { data: locationData, error: locationError } = await supabase
+        .from('location_recommendations')
+        .select('*')
+        .order('avg_monthly_demand', { ascending: false });
 
-      if (response.error) throw response.error;
-      
-      setOpportunities(response.data?.opportunities || []);
+      if (locationError) throw locationError;
+
+      // Load user opportunities
+      const { data: userData, error: userError } = await supabase
+        .from('user_recommendations')
+        .select('*')
+        .order('fit_score', { ascending: false });
+
+      if (userError) throw userError;
+
+      setLocationOpportunities(locationData || []);
+      setUserOpportunities(userData || []);
       
       toast({
-        title: "Recommendations updated",
-        description: `Found ${response.data?.opportunities?.length || 0} market opportunities for you.`
+        title: "Recommendations loaded",
+        description: `Found ${(locationData?.length || 0) + (userData?.length || 0)} opportunities.`
       });
     } catch (error) {
-      console.error('Error generating recommendations:', error);
+      console.error('Error loading recommendations:', error);
       toast({
-        title: "Error generating recommendations",
+        title: "Error loading recommendations",
         description: "Please try again later.",
         variant: "destructive"
       });
@@ -123,6 +139,7 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+
 
   const logEvent = async (eventType: string, metadata: any) => {
     try {
@@ -140,7 +157,7 @@ const Dashboard = () => {
 
   const handleProfileUpdate = (updatedProfile: UserProfile) => {
     setUserProfile(updatedProfile);
-    generateRecommendations(updatedProfile);
+    loadRecommendations();
   };
 
   return (
@@ -216,9 +233,9 @@ const Dashboard = () => {
                     <CardContent className="p-4 text-center">
                       <TrendingUp className="w-6 h-6 mx-auto mb-1 text-primary" />
                       <div className="text-xl font-bold text-foreground">
-                        {opportunities.length}
+                        {userOpportunities.length}
                       </div>
-                      <p className="text-muted-foreground text-xs">Opportunities</p>
+                      <p className="text-muted-foreground text-xs">Personal Opps</p>
                     </CardContent>
                   </Card>
 
@@ -226,12 +243,12 @@ const Dashboard = () => {
                     <CardContent className="p-4 text-center">
                       <Target className="w-6 h-6 mx-auto mb-1 text-success" />
                       <div className="text-xl font-bold text-foreground">
-                        {opportunities.length > 0 
-                          ? Math.round(opportunities.reduce((acc, opp) => acc + opp.fit_score, 0) / opportunities.length)
+                        {userOpportunities.length > 0 
+                          ? Math.round(userOpportunities.reduce((acc, opp) => acc + opp.fit_score, 0) / userOpportunities.length)
                           : 0
                         }%
                       </div>
-                      <p className="text-muted-foreground text-xs">Avg Fit</p>
+                      <p className="text-muted-foreground text-xs">Avg Fit Score</p>
                     </CardContent>
                   </Card>
 
@@ -239,52 +256,79 @@ const Dashboard = () => {
                     <CardContent className="p-4 text-center">
                       <MapPin className="w-6 h-6 mx-auto mb-1 text-warning" />
                       <div className="text-xl font-bold text-foreground">
-                        {opportunities.filter(opp => opp.demand_score >= 80).length}
+                        {locationOpportunities.length}
                       </div>
-                      <p className="text-muted-foreground text-xs">High Demand</p>
+                      <p className="text-muted-foreground text-xs">Market Areas</p>
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Map and Opportunities Grid */}
+                {/* Geography and Personal Opportunities Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Map */}
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg">Geographic Distribution</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <OpportunityMap opportunities={opportunities} />
-                    </CardContent>
-                  </Card>
-
-                  {/* Top Opportunities */}
+                  {/* Geographic Opportunities */}
                   <Card>
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg flex items-center justify-between">
-                        Top Opportunities
+                        <div className="flex items-center space-x-2">
+                          <MapPin className="w-5 h-5 text-primary" />
+                          <span>Geographic Opportunities</span>
+                        </div>
                         <Badge variant="secondary" className="text-xs">
-                          {opportunities.length} total
+                          {locationOpportunities.length} markets
                         </Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3 max-h-80 overflow-y-auto">
-                        {opportunities
+                        {locationOpportunities.map((opportunity) => (
+                          <LocationOpportunityCard
+                            key={opportunity.rec_id}
+                            opportunity={opportunity}
+                            userId={DEMO_USER_ID}
+                            onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
+                          />
+                        ))}
+                        
+                        {locationOpportunities.length === 0 && (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <MapPin className="w-12 h-12 mx-auto mb-4 opacity-40" />
+                            <p>No geographic opportunities found.</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Personal Opportunities */}
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Target className="w-5 h-5 text-primary" />
+                          <span>Top Personal Opportunities</span>
+                        </div>
+                        <Badge variant="secondary" className="text-xs">
+                          {userOpportunities.length} matches
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 max-h-80 overflow-y-auto">
+                        {userOpportunities
                           .sort((a, b) => b.fit_score - a.fit_score)
                           .map((opportunity) => (
-                            <OpportunityCard
+                            <UserOpportunityCard
                               key={opportunity.rec_id}
                               opportunity={opportunity}
-                               userId={DEMO_USER_ID}
-                               onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
+                              userId={DEMO_USER_ID}
+                              onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
                             />
                           ))}
                         
-                        {opportunities.length === 0 && (
+                        {userOpportunities.length === 0 && (
                           <div className="text-center py-8 text-muted-foreground">
                             <Target className="w-12 h-12 mx-auto mb-4 opacity-40" />
-                            <p>No opportunities found. Update your profile to get recommendations!</p>
+                            <p>No personal opportunities found.</p>
                           </div>
                         )}
                       </div>
@@ -317,13 +361,13 @@ const Dashboard = () => {
                   <ProfileForm 
                     profile={userProfile}
                     loading={profileLoading}
-                    onUpdate={(updatedProfile) => {
-                      if (updatedProfile) {
-                        handleProfileUpdate(updatedProfile);
-                      } else {
-                        generateRecommendations();
-                      }
-                    }}
+                     onUpdate={(updatedProfile) => {
+                       if (updatedProfile) {
+                         handleProfileUpdate(updatedProfile);
+                       } else {
+                         loadRecommendations();
+                       }
+                     }}
                   />
                   
                   <div className="pt-6 border-t border-border">

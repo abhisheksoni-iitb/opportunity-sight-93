@@ -89,6 +89,48 @@ export type Database = {
         }
         Relationships: []
       }
+      location_recommendations: {
+        Row: {
+          avg_monthly_demand: number
+          competition_level: string
+          created_at: string | null
+          last_updated: string
+          location: string
+          peak_season: string
+          rec_id: number
+          suggested_skus: string
+          top_brands: string
+          trending_categories: string
+          why_trending: string
+        }
+        Insert: {
+          avg_monthly_demand: number
+          competition_level: string
+          created_at?: string | null
+          last_updated: string
+          location: string
+          peak_season: string
+          rec_id: number
+          suggested_skus: string
+          top_brands: string
+          trending_categories: string
+          why_trending: string
+        }
+        Update: {
+          avg_monthly_demand?: number
+          competition_level?: string
+          created_at?: string | null
+          last_updated?: string
+          location?: string
+          peak_season?: string
+          rec_id?: number
+          suggested_skus?: string
+          top_brands?: string
+          trending_categories?: string
+          why_trending?: string
+        }
+        Relationships: []
+      }
       ongoing_mission: {
         Row: {
           end_time: string | null
@@ -310,6 +352,57 @@ export type Database = {
           location?: Json | null
           processes?: string[] | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_recommendations: {
+        Row: {
+          action_priority: string
+          confidence: number
+          created_at: string | null
+          expected_roi_pct: number
+          fit_score: number
+          last_recommended: string
+          projected_monthly_demand: number
+          rec_id: number
+          recommended_category: string
+          required_certifications: string
+          specific_sku: string
+          top_competing_brands: string
+          user_id: number
+          why_fit: string
+        }
+        Insert: {
+          action_priority: string
+          confidence: number
+          created_at?: string | null
+          expected_roi_pct: number
+          fit_score: number
+          last_recommended: string
+          projected_monthly_demand: number
+          rec_id: number
+          recommended_category: string
+          required_certifications: string
+          specific_sku: string
+          top_competing_brands: string
+          user_id: number
+          why_fit: string
+        }
+        Update: {
+          action_priority?: string
+          confidence?: number
+          created_at?: string | null
+          expected_roi_pct?: number
+          fit_score?: number
+          last_recommended?: string
+          projected_monthly_demand?: number
+          rec_id?: number
+          recommended_category?: string
+          required_certifications?: string
+          specific_sku?: string
+          top_competing_brands?: string
+          user_id?: number
+          why_fit?: string
         }
         Relationships: []
       }

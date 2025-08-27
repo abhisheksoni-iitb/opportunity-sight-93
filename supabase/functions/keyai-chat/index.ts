@@ -40,17 +40,25 @@ Keep the tone professional yet engaging.`;
       const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
       
       // Get all recommendations data for context
-      const { data: recommendations, error } = await supabase
-        .from('recommendations')
-        .select(`
-          *,
-          supplier_trends (*)
-        `)
-        .limit(30);
-      
-      if (error) {
-        console.error('Error fetching recommendations:', error);
+      const { data: locationRecs, error: locationError } = await supabase
+        .from('location_recommendations')
+        .select('*')
+        .limit(15);
+        
+      const { data: userRecs, error: userError } = await supabase
+        .from('user_recommendations')
+        .select('*')
+        .limit(15);
+        
+      if (locationError || userError) {
+        console.error('Error fetching recommendations:', locationError || userError);
       }
+      
+      const recommendations = {
+        location_opportunities: locationRecs || [],
+        user_opportunities: userRecs || []
+      };
+      
       
       prompt = `User has asked this: "${query}".
 

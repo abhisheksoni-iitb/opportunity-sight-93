@@ -66,6 +66,16 @@ const OpportunityChat: React.FC<OpportunityChatProps> = ({
 
       if (error) throw error;
 
+      // Handle rate limiting
+      if (data.rateLimited) {
+        toast({
+          title: "Rate Limit Exceeded",
+          description: data.error,
+          variant: "destructive"
+        });
+        return;
+      }
+
       const newMessage: ChatMessage = {
         id: Date.now().toString(),
         role: 'assistant',
@@ -118,6 +128,16 @@ const OpportunityChat: React.FC<OpportunityChatProps> = ({
       });
 
       if (error) throw error;
+
+      // Handle rate limiting
+      if (data.rateLimited) {
+        toast({
+          title: "Rate Limit Exceeded",
+          description: data.error,
+          variant: "destructive"
+        });
+        return;
+      }
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),

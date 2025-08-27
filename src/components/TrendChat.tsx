@@ -77,6 +77,16 @@ const TrendChat: React.FC<TrendChatProps> = ({ userId, userLocation }) => {
 
       if (error) throw error;
 
+      // Handle rate limiting
+      if (data.rateLimited) {
+        toast({
+          title: "Rate Limit Exceeded",
+          description: data.error,
+          variant: "destructive"
+        });
+        return;
+      }
+
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',

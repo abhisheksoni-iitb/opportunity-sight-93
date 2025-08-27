@@ -116,6 +116,16 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
 
       if (response.error) throw response.error;
       
+      // Handle rate limiting
+      if (response.data?.rateLimited) {
+        toast({
+          title: "Rate Limit Exceeded",
+          description: response.data.error,
+          variant: "destructive"
+        });
+        return;
+      }
+      
       const results = response.data?.opportunities || [];
       setOpportunities(results);
       // Save to session storage

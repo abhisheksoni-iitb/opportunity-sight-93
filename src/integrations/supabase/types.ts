@@ -137,6 +137,98 @@ export type Database = {
         }
         Relationships: []
       }
+      recommendations: {
+        Row: {
+          context: Json | null
+          created_at: string
+          date_recommended: string | null
+          engagement_action: string | null
+          fit_score: number | null
+          outcome: string | null
+          reasoning: string | null
+          rec_id: string
+          setup_requirements: Json | null
+          trend_id: string | null
+          user_id: string
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          date_recommended?: string | null
+          engagement_action?: string | null
+          fit_score?: number | null
+          outcome?: string | null
+          reasoning?: string | null
+          rec_id?: string
+          setup_requirements?: Json | null
+          trend_id?: string | null
+          user_id: string
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          date_recommended?: string | null
+          engagement_action?: string | null
+          fit_score?: number | null
+          outcome?: string | null
+          reasoning?: string | null
+          rec_id?: string
+          setup_requirements?: Json | null
+          trend_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendations_trend_id_fkey"
+            columns: ["trend_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_trends"
+            referencedColumns: ["trend_id"]
+          },
+        ]
+      }
+      supplier_trends: {
+        Row: {
+          avg_price: number | null
+          created_at: string
+          demand_score: number | null
+          geography: Json | null
+          market_size: number | null
+          product_category: string
+          required_setup: string[] | null
+          supplier_density: number | null
+          trend_id: string
+          trending_brands: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          avg_price?: number | null
+          created_at?: string
+          demand_score?: number | null
+          geography?: Json | null
+          market_size?: number | null
+          product_category: string
+          required_setup?: string[] | null
+          supplier_density?: number | null
+          trend_id?: string
+          trending_brands?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          avg_price?: number | null
+          created_at?: string
+          demand_score?: number | null
+          geography?: Json | null
+          market_size?: number | null
+          product_category?: string
+          required_setup?: string[] | null
+          supplier_density?: number | null
+          trend_id?: string
+          trending_brands?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       use_cases: {
         Row: {
           created_at: string
@@ -179,6 +271,45 @@ export type Database = {
           title?: string
           updated_at?: string
           urgency?: string | null
+        }
+        Relationships: []
+      }
+      user_data: {
+        Row: {
+          capacity: string | null
+          certifications: string[] | null
+          company_name: string | null
+          created_at: string
+          current_products: string[] | null
+          interests: string[] | null
+          last_active: string | null
+          location: Json | null
+          processes: string[] | null
+          user_id: string
+        }
+        Insert: {
+          capacity?: string | null
+          certifications?: string[] | null
+          company_name?: string | null
+          created_at?: string
+          current_products?: string[] | null
+          interests?: string[] | null
+          last_active?: string | null
+          location?: Json | null
+          processes?: string[] | null
+          user_id?: string
+        }
+        Update: {
+          capacity?: string | null
+          certifications?: string[] | null
+          company_name?: string | null
+          created_at?: string
+          current_products?: string[] | null
+          interests?: string[] | null
+          last_active?: string | null
+          location?: Json | null
+          processes?: string[] | null
+          user_id?: string
         }
         Relationships: []
       }

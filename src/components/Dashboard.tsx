@@ -2,31 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
   TrendingUp, 
   MapPin, 
-  Building, 
   Target, 
-  Sparkles, 
-  BarChart3,
-  Globe,
   Users,
-  Star,
-  ArrowRight,
-  RefreshCw,
-  Search,
-  BookmarkPlus,
-  Mail,
-  Eye
+  User
 } from 'lucide-react';
-import heroDashboard from '@/assets/hero-dashboard.jpg';
 import OpportunityMap from '@/components/OpportunityMap';
 import OpportunityCard from '@/components/OpportunityCard';
 import ProfileForm from '@/components/ProfileForm';
@@ -67,7 +52,7 @@ const Dashboard = () => {
   const { toast } = useToast();
 
   // Demo user ID for development
-  const DEMO_USER_ID = '11111111-1111-1111-1111-111111111111';
+  const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001';
 
   useEffect(() => {
     loadUserProfile();
@@ -152,202 +137,151 @@ const Dashboard = () => {
     }
   };
 
+  const handleProfileUpdate = (updatedProfile: UserProfile) => {
+    setUserProfile(updatedProfile);
+    generateRecommendations(updatedProfile);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-surface">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
-                <TrendingUp className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Market Navigator</h1>
-                <p className="text-sm text-muted-foreground">AI-Powered Market Intelligence</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Badge variant="outline" className="px-3 py-1">
-                <Sparkles className="w-3 h-3 mr-1" />
-                Premium Analytics
-              </Badge>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="relative bg-gradient-primary overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <img 
-          src={heroDashboard} 
-          alt="Market Analytics Dashboard" 
-          className="absolute inset-0 w-full h-full object-cover mix-blend-overlay"
-        />
-        <div className="relative container mx-auto px-4 py-12">
-          <div className="max-w-3xl">
-            <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-              Discover Your Next Market Opportunity
-            </h2>
-            <p className="text-xl text-primary-foreground/90 mb-6">
-              AI-powered insights, personalized recommendations, and real-time market trends to fuel your business growth.
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6 space-y-6 max-w-7xl">
+        {/* Header */}
+        <div className="flex items-center justify-between py-4">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">
+              Market Navigator
+            </h1>
+            <p className="text-muted-foreground">
+              Discover personalized market opportunities and explore industry trends
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button 
-                variant="secondary" 
-                size="lg"
-                onClick={() => setActiveTab('opportunities')}
-              >
-                <Target className="w-5 h-5 mr-2" />
-                View Opportunities
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-                onClick={() => setActiveTab('explorer')}
-              >
-                <Search className="w-5 h-5 mr-2" />
-                Explore Trends
-              </Button>
-            </div>
           </div>
+          <Button
+            onClick={() => setActiveTab('opportunities')}
+            className="bg-primary hover:bg-primary-deep text-primary-foreground font-medium"
+          >
+            Explore Opportunities
+          </Button>
         </div>
-      </section>
 
-      {/* Main Dashboard */}
-      <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="opportunities" className="flex items-center space-x-2">
-              <Target className="w-4 h-4" />
-              <span>Personalized Opportunities</span>
-            </TabsTrigger>
-            <TabsTrigger value="explorer" className="flex items-center space-x-2">
-              <Sparkles className="w-4 h-4" />
-              <span>Trend Explorer</span>
-            </TabsTrigger>
-          </TabsList>
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <div className="border-b border-border">
+            <TabsList className="h-12 bg-muted/30 w-auto rounded-none border-b-0">
+              <TabsTrigger 
+                value="opportunities"
+                className="px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                Personalized Opportunities
+              </TabsTrigger>
+              <TabsTrigger 
+                value="trends"
+                className="px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                Trend Explorer
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-          <TabsContent value="opportunities" className="space-y-6">
-            <div className="grid lg:grid-cols-4 gap-6">
-              {/* Profile Panel */}
+          <TabsContent value="opportunities" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Profile Section - Sidebar */}
               <div className="lg:col-span-1">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Building className="w-5 h-5" />
+                <Card className="sticky top-6">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center space-x-2">
+                      <User className="w-5 h-5 text-primary" />
                       <span>Your Profile</span>
                     </CardTitle>
-                    <CardDescription>
-                      Adjust your business details to get better recommendations
-                    </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-0">
                     <ProfileForm 
                       profile={userProfile}
-                      loading={profileLoading}
-                      onUpdate={generateRecommendations}
+                      onGenerateRecommendations={() => generateRecommendations()}
                     />
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Opportunities Panel */}
+              {/* Main Content Area */}
               <div className="lg:col-span-3 space-y-6">
                 {/* Stats Cards */}
-                <div className="grid md:grid-cols-3 gap-4">
-                  <Card>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground">Total Opportunities</p>
-                          <p className="text-2xl font-bold text-foreground">{opportunities.length}</p>
-                        </div>
-                        <BarChart3 className="w-8 h-8 text-primary" />
+                <div className="grid grid-cols-3 gap-4">
+                  <Card className="border-primary/20">
+                    <CardContent className="p-4 text-center">
+                      <TrendingUp className="w-6 h-6 mx-auto mb-1 text-primary" />
+                      <div className="text-xl font-bold text-foreground">
+                        {opportunities.length}
                       </div>
+                      <p className="text-muted-foreground text-xs">Opportunities</p>
                     </CardContent>
                   </Card>
-                  <Card>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground">Avg Fit Score</p>
-                          <p className="text-2xl font-bold text-foreground">
-                            {opportunities.length > 0 
-                              ? Math.round(opportunities.reduce((acc, opp) => acc + opp.fit_score, 0) / opportunities.length)
-                              : 0}%
-                          </p>
-                        </div>
-                        <Star className="w-8 h-8 text-accent" />
+
+                  <Card className="border-success/20">
+                    <CardContent className="p-4 text-center">
+                      <Target className="w-6 h-6 mx-auto mb-1 text-success" />
+                      <div className="text-xl font-bold text-foreground">
+                        {opportunities.length > 0 
+                          ? Math.round(opportunities.reduce((acc, opp) => acc + opp.fit_score, 0) / opportunities.length)
+                          : 0
+                        }%
                       </div>
+                      <p className="text-muted-foreground text-xs">Avg Fit</p>
                     </CardContent>
                   </Card>
-                  <Card>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground">High Demand</p>
-                          <p className="text-2xl font-bold text-foreground">
-                            {opportunities.filter(opp => opp.demand_score > 80).length}
-                          </p>
-                        </div>
-                        <TrendingUp className="w-8 h-8 text-success" />
+
+                  <Card className="border-warning/20">
+                    <CardContent className="p-4 text-center">
+                      <MapPin className="w-6 h-6 mx-auto mb-1 text-warning" />
+                      <div className="text-xl font-bold text-foreground">
+                        {opportunities.filter(opp => opp.demand_score >= 80).length}
                       </div>
+                      <p className="text-muted-foreground text-xs">High Demand</p>
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Map and List */}
-                <div className="grid lg:grid-cols-2 gap-6">
+                {/* Map and Opportunities Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Map */}
                   <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <Globe className="w-5 h-5" />
-                        <span>Geographic Opportunities</span>
-                      </CardTitle>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg">Geographic Distribution</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <OpportunityMap opportunities={opportunities} />
                     </CardContent>
                   </Card>
 
+                  {/* Top Opportunities */}
                   <Card>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center space-x-2">
-                          <Users className="w-5 h-5" />
-                          <span>Top Matches</span>
-                        </CardTitle>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => generateRecommendations()}
-                          disabled={loading}
-                        >
-                          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                          Refresh
-                        </Button>
-                      </div>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center justify-between">
+                        Top Opportunities
+                        <Badge variant="secondary" className="text-xs">
+                          {opportunities.length} total
+                        </Badge>
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4 max-h-96 overflow-y-auto">
-                      {opportunities
-                        .sort((a, b) => b.fit_score - a.fit_score)
-                        .slice(0, 10)
-                        .map((opportunity) => (
-                          <OpportunityCard
-                            key={opportunity.rec_id}
-                            opportunity={opportunity}
-                            onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
-                          />
-                        ))}
-                      {opportunities.length === 0 && !loading && (
-                        <div className="text-center py-8 text-muted-foreground">
-                          <Target className="w-12 h-12 mx-auto mb-4 opacity-40" />
-                          <p>No opportunities yet. Update your profile to get started!</p>
-                        </div>
-                      )}
+                    <CardContent>
+                      <div className="space-y-3 max-h-80 overflow-y-auto">
+                        {opportunities
+                          .sort((a, b) => b.fit_score - a.fit_score)
+                          .slice(0, 8)
+                          .map((opportunity) => (
+                            <OpportunityCard
+                              key={opportunity.rec_id}
+                              opportunity={opportunity}
+                              onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
+                            />
+                          ))}
+                        
+                        {opportunities.length === 0 && (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <Target className="w-12 h-12 mx-auto mb-4 opacity-40" />
+                            <p>No opportunities found. Update your profile to get recommendations!</p>
+                          </div>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -355,11 +289,11 @@ const Dashboard = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="explorer" className="space-y-6">
+          <TabsContent value="trends" className="space-y-6">
             <TrendExplorer onEvent={logEvent} />
           </TabsContent>
         </Tabs>
-      </main>
+      </div>
     </div>
   );
 };

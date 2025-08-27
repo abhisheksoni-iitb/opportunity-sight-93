@@ -1,0 +1,53 @@
+-- Clear existing data and insert new realistic data
+DELETE FROM recommendations;
+DELETE FROM supplier_trends;
+DELETE FROM user_data;
+
+-- Insert new user data
+INSERT INTO user_data (user_id, company_name, location, certifications, current_products, processes, capacity, interests, last_active, created_at) VALUES
+('00000000-0000-0000-0000-000000000001', 'Premium Bottlers LLC', '{"city": "Chicago", "state": "IL", "country": "USA"}', ARRAY['USDA Organic', 'Kosher'], ARRAY['Soda', 'Energy Drinks'], ARRAY['Mixer', 'Bottling'], '500000', ARRAY['Functional Beverages', 'Snacks'], '2025-08-27'::timestamp, now()),
+('00000000-0000-0000-0000-000000000002', 'Frosty Snacks Inc.', '{"city": "Dallas", "state": "TX", "country": "USA"}', ARRAY['Gluten-Free'], ARRAY['Potato Chips', 'Tortilla Chips'], ARRAY['Fryer', 'Slicer'], '300000', ARRAY['Savory Snacks', 'Baked Goods'], '2025-08-26'::timestamp, now()),
+('00000000-0000-0000-0000-000000000003', 'Modern Breweries', '{"city": "San Diego", "state": "CA", "country": "USA"}', ARRAY['ISO 22000', 'Non-GMO'], ARRAY['Beer', 'Pilsner', 'Lager'], ARRAY['Brewery', 'Canning', 'Bottling'], '900000', ARRAY['Beer', 'RTD Cocktails'], '2025-08-27'::timestamp, now()),
+('00000000-0000-0000-0000-000000000004', 'FreshDairy Products', '{"city": "Minneapolis", "state": "MN", "country": "USA"}', ARRAY['USDA Organic', 'SQF'], ARRAY['Milk Powder', 'Infant Formula'], ARRAY['Spray Dryer', 'Blending'], '750000', ARRAY['Dairy', 'Powdered Nutrition'], '2025-08-24'::timestamp, now()),
+('00000000-0000-0000-0000-000000000005', 'Healthy Eats Mfg.', '{"city": "Atlanta", "state": "GA", "country": "USA"}', ARRAY['USDA Organic', 'Gluten-Free'], ARRAY['Strawberries', 'Baked Goods'], ARRAY['Chiller', 'Sorter', 'Oven'], '420000', ARRAY['Plant-Based', 'Functional Foods'], '2025-08-24'::timestamp, now()),
+('00000000-0000-0000-0000-000000000006', 'GreatBrands Foods', '{"city": "Los Angeles", "state": "CA", "country": "USA"}', ARRAY['BRC', 'FSSC 22000'], ARRAY['Cola Soda', 'Lemon-Lime Soda', 'Sprite'], ARRAY['Mixer', 'Bottling', 'Canning'], '1000000', ARRAY['Sodas', 'Fruit Drinks'], '2025-08-27'::timestamp, now()),
+('00000000-0000-0000-0000-000000000007', 'SnackPro LLC', '{"city": "Houston", "state": "TX", "country": "USA"}', ARRAY['Gluten-Free'], ARRAY['Nacho Chips', 'Potato Chips'], ARRAY['Tortilla Press', 'Fryer'], '350000', ARRAY['Savory Snacks', 'Tortilla Chips'], '2025-08-26'::timestamp, now()),
+('00000000-0000-0000-0000-000000000008', 'Crisp Masters', '{"city": "Boise", "state": "ID", "country": "USA"}', ARRAY['Kosher'], ARRAY['Potato Chips', 'Classic Chips'], ARRAY['Slicer', 'Fryer'], '200000', ARRAY['Chips', 'Snacks'], '2025-08-25'::timestamp, now()),
+('00000000-0000-0000-0000-000000000009', 'Sunshine Beverages', '{"city": "Miami", "state": "FL", "country": "USA"}', ARRAY['USDA Organic'], ARRAY['Juices', 'Energy Drinks'], ARRAY['Mixer', 'Pasteurizer'], '550000', ARRAY['Wellness Drinks', 'Energy'], '2025-08-27'::timestamp, now()),
+('00000000-0000-0000-0000-000000000010', 'RedStar Brands', '{"city": "Boston", "state": "MA", "country": "USA"}', ARRAY['Non-GMO', 'Kosher'], ARRAY['Cola Sodas', 'Red Bull'], ARRAY['Mixer', 'Bottling'], '800000', ARRAY['Energy Drinks', 'Soda'], '2025-08-27'::timestamp, now());
+
+-- Insert supplier trends data
+INSERT INTO supplier_trends (trend_id, product_category, geography, demand_score, market_size, avg_price, required_setup, trending_brands, supplier_density, created_at, updated_at) VALUES
+('10000000-0000-0000-0000-000000000001', 'Coca-Cola Soda, 591 Ml', '{"states": ["CA", "TX", "IL", "NY"]}', 95, 150000, 2.43, ARRAY['Mixer', 'PET Bottle'], ARRAY['Coca-Cola'], 85, now(), now()),
+('10000000-0000-0000-0000-000000000002', 'Original Taste Soda', '{"states": ["CA", "TX", "FL"]}', 91, 120000, 6.68, ARRAY['Mixer', 'Aluminum Can'], ARRAY['Coca-Cola'], 78, now(), now()),
+('10000000-0000-0000-0000-000000000003', 'Red Bull Energy Drink, 12 Fl Oz', '{"states": ["CA", "NY", "FL"]}', 90, 95000, 3.20, ARRAY['Mixer', 'PET Bottle'], ARRAY['Red Bull'], 92, now(), now()),
+('10000000-0000-0000-0000-000000000004', 'Monster Energy Drink, 16 Fl Oz', '{"states": ["TX", "FL", "AZ"]}', 85, 87000, 2.74, ARRAY['Mixer', 'PET/Paper Can'], ARRAY['Monster'], 88, now(), now()),
+('10000000-0000-0000-0000-000000000005', 'Diet Coke Soda, 20 Fl Oz', '{"states": ["IL", "GA", "OH"]}', 82, 76000, 2.44, ARRAY['Mixer', 'PET Bottle'], ARRAY['Coca-Cola'], 80, now(), now()),
+('10000000-0000-0000-0000-000000000006', 'Classic Potato Chips', '{"states": ["TX", "CA", "FL"]}', 87, 110000, 3.34, ARRAY['Fryer', 'Potato Slicer'], ARRAY['Lays'], 95, now(), now()),
+('10000000-0000-0000-0000-000000000007', 'Nacho Cheese Tortilla Chips', '{"states": ["CA", "TX", "NM"]}', 80, 89000, 4.39, ARRAY['Tortilla Press', 'Fryer'], ARRAY['Doritos'], 72, now(), now()),
+('10000000-0000-0000-0000-000000000008', 'Superior Light Beer', '{"states": ["CA", "NY", "IL"]}', 93, 180000, 20.94, ARRAY['Brewery', 'Canning'], ARRAY['Michelob'], 65, now(), now()),
+('10000000-0000-0000-0000-000000000009', 'Especial Pilsner-Style Lager', '{"states": ["CA", "TX", "FL"]}', 91, 165000, 28.57, ARRAY['Brewery', 'Bottling'], ARRAY['Modelo'], 58, now(), now()),
+('10000000-0000-0000-0000-000000000010', 'Citrus Soda', '{"states": ["FL", "CA", "AZ"]}', 80, 72000, 2.35, ARRAY['Mixer', 'PET Bottle'], ARRAY['Mountain Dew'], 85, now(), now()),
+('10000000-0000-0000-0000-000000000011', 'Budweiser Beer', '{"states": ["NY", "NJ", "IL"]}', 94, 195000, 13.53, ARRAY['Brewery', 'Bottling'], ARRAY['Budweiser'], 70, now(), now()),
+('10000000-0000-0000-0000-000000000012', 'Dr Pepper Soda, 591 Ml', '{"states": ["TX", "CA", "NY"]}', 86, 98000, 2.39, ARRAY['Mixer', 'PET Bottle'], ARRAY['Dr Pepper'], 82, now(), now()),
+('10000000-0000-0000-0000-000000000013', 'Michelob Ultra Beer', '{"states": ["IL", "FL", "TX"]}', 82, 145000, 24.09, ARRAY['Brewery', 'Canning'], ARRAY['Michelob'], 68, now(), now()),
+('10000000-0000-0000-0000-000000000014', 'La Cerveza Mas Fina Beer', '{"states": ["CA", "TX", "FL"]}', 89, 170000, 19.27, ARRAY['Brewery', 'Bottling'], ARRAY['Corona Extra'], 62, now(), now()),
+('10000000-0000-0000-0000-000000000015', 'Fridge Pack Cans', '{"states": ["CA", "NY", "FL"]}', 77, 85000, 6.80, ARRAY['Can Filler', 'Carton Packer'], ARRAY['Coca-Cola'], 90, now(), now()),
+('10000000-0000-0000-0000-000000000016', 'Pepsi Cola Soda', '{"states": ["NY", "NJ", "PA"]}', 85, 102000, 6.36, ARRAY['Mixer', 'PET Bottle'], ARRAY['Pepsi'], 88, now(), now()),
+('10000000-0000-0000-0000-000000000017', 'Sprite Bottle, 20 Fl Oz', '{"states": ["CA", "TX", "IL"]}', 83, 79000, 2.46, ARRAY['Mixer', 'PET Bottle'], ARRAY['Sprite'], 85, now(), now()),
+('10000000-0000-0000-0000-000000000018', 'Doritos Nacho Chips', '{"states": ["CA", "TX", "NY"]}', 88, 115000, 5.72, ARRAY['Tortilla Press', 'Fryer'], ARRAY['Doritos'], 75, now(), now()),
+('10000000-0000-0000-0000-000000000019', 'Coca-Cola Zero Sugar Fridge Pack', '{"states": ["CA", "TX", "FL"]}', 75, 68000, 6.72, ARRAY['Mixer', 'Can'], ARRAY['Coca-Cola'], 87, now(), now()),
+('10000000-0000-0000-0000-000000000020', 'Modelo Especial Beer', '{"states": ["TX", "CA", "FL"]}', 90, 175000, 25.18, ARRAY['Brewery', 'Bottling'], ARRAY['Modelo'], 60, now(), now());
+
+-- Insert recommendations data
+INSERT INTO recommendations (rec_id, user_id, trend_id, fit_score, reasoning, setup_requirements, date_recommended, engagement_action, outcome, context, created_at) VALUES
+('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002', 93, 'Perfect match for your soda production capabilities and geographic location', '{"equipment": ["Mixer", "Aluminum Can"], "certifications": []}', '2025-08-27'::timestamp, 'viewed', 'accepted', '{}', now()),
+('20000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000010', 80, 'Good geographic fit, requires PET bottle capability you have', '{"equipment": ["Mixer", "PET Bottle"], "certifications": []}', '2025-08-27'::timestamp, 'viewed', 'pending', '{}', now()),
+('20000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000006', 90, 'Excellent match for your chip production processes', '{"equipment": ["Fryer", "Potato Slicer"], "certifications": []}', '2025-08-26'::timestamp, 'saved', 'accepted', '{}', now()),
+('20000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000007', 87, 'Strong fit for tortilla chip production capabilities', '{"equipment": ["Tortilla Press", "Fryer"], "certifications": []}', '2025-08-26'::timestamp, 'viewed', 'accepted', '{}', now()),
+('20000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000008', 95, 'Perfect brewery match with your canning capabilities', '{"equipment": ["Brewery", "Canning"], "certifications": []}', '2025-08-27'::timestamp, 'contacted_supplier', 'accepted', '{}', now()),
+('20000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000009', 85, 'Good brewery fit, requires bottling line setup', '{"equipment": ["Brewery", "Bottling"], "certifications": []}', '2025-08-27'::timestamp, 'viewed', 'pending', '{}', now()),
+('20000000-0000-0000-0000-000000000007', '00000000-0000-0000-0000-000000000006', '10000000-0000-0000-0000-000000000001', 97, 'Exceptional fit for your Coca-Cola production capabilities', '{"equipment": ["Mixer", "PET Bottle"], "certifications": []}', '2025-08-27'::timestamp, 'contacted_supplier', 'accepted', '{}', now()),
+('20000000-0000-0000-0000-000000000008', '00000000-0000-0000-0000-000000000006', '10000000-0000-0000-0000-000000000016', 89, 'Strong match for cola production in your target markets', '{"equipment": ["Mixer", "PET Bottle"], "certifications": []}', '2025-08-27'::timestamp, 'saved', 'pending', '{}', now()),
+('20000000-0000-0000-0000-000000000009', '00000000-0000-0000-0000-000000000007', '10000000-0000-0000-0000-000000000007', 88, 'Excellent match for nacho chip production', '{"equipment": ["Tortilla Press", "Fryer"], "certifications": []}', '2025-08-26'::timestamp, 'viewed', 'accepted', '{}', now()),
+('20000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000008', '10000000-0000-0000-0000-000000000006', 84, 'Good fit for potato chip production capabilities', '{"equipment": ["Fryer", "Potato Slicer"], "certifications": []}', '2025-08-25'::timestamp, 'contacted_supplier', 'accepted', '{}', now());

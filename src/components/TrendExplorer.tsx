@@ -43,24 +43,35 @@ interface TrendExplorerProps {
 
 const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
   const [loading, setLoading] = useState(false);
-  const [opportunities, setOpportunities] = useState<AIOpportunity[]>([]);
-  const [formData, setFormData] = useState({
-    location: '',
-    budget: '',
-    processes: '',
-    certifications: '',
-    target_brands: '',
-    industries: '',
-    query_text: ''
+  const [opportunities, setOpportunities] = useState<AIOpportunity[]>(() => {
+    // Load from session storage on component mount
+    const saved = sessionStorage.getItem('trendExplorerResults');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [formData, setFormData] = useState(() => {
+    // Load form data from session storage
+    const saved = sessionStorage.getItem('trendExplorerForm');
+    return saved ? JSON.parse(saved) : {
+      location: '',
+      budget: '',
+      processes: '',
+      certifications: '',
+      target_brands: '',
+      industries: '',
+      query_text: ''
+    };
   });
 
   const { toast } = useToast();
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
+    const newData = {
+      ...formData,
       [field]: value
-    }));
+    };
+    setFormData(newData);
+    // Save to session storage
+    sessionStorage.setItem('trendExplorerForm', JSON.stringify(newData));
   };
 
   const handleExplore = async () => {
@@ -75,10 +86,25 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
 
     setLoading(true);
     try {
+      // Build enhanced query with criteria
+      let enhancedQuery = formData.query_text;
+      const criteria = [];
+      
+      if (formData.location) criteria.push(`Location(s): ${formData.location}`);
+      if (formData.budget) criteria.push(`Budget Range: ${formData.budget}`);
+      if (formData.processes) criteria.push(`Available Processes: ${formData.processes}`);
+      if (formData.certifications) criteria.push(`Certifications: ${formData.certifications}`);
+      if (formData.target_brands) criteria.push(`Target Brands: ${formData.target_brands}`);
+      if (formData.industries) criteria.push(`Industries: ${formData.industries}`);
+      
+      if (criteria.length > 0) {
+        enhancedQuery = `${formData.query_text}\n\nCriteria:\n${criteria.join(';\n')};`;
+      }
+
       const response = await supabase.functions.invoke('gemini-trends', {
         body: {
           user_id: '11111111-1111-1111-1111-111111111111', // Demo user
-          query_text: formData.query_text,
+          query_text: enhancedQuery,
           location: formData.location,
           budget: formData.budget,
           processes: formData.processes.split(',').map(p => p.trim()).filter(Boolean),
@@ -90,12 +116,16 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
 
       if (response.error) throw response.error;
       
-      setOpportunities(response.data?.opportunities || []);
-      onEvent('gemini_query', { query: formData.query_text, results_count: response.data?.opportunities?.length || 0 });
+      const results = response.data?.opportunities || [];
+      setOpportunities(results);
+      // Save to session storage
+      sessionStorage.setItem('trendExplorerResults', JSON.stringify(results));
+      
+      onEvent('gemini_query', { query: formData.query_text, results_count: results.length });
       
       toast({
         title: "Analysis complete",
-        description: `Found ${response.data?.opportunities?.length || 0} AI-powered opportunities.`
+        description: `Found ${results.length} AI-powered opportunities.`
       });
     } catch (error) {
       console.error('Error exploring trends:', error);
@@ -166,17 +196,18 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
   };
 
   return (
-    <div className="grid lg:grid-cols-3 gap-6">
-      {/* Criteria Panel */}
-      <div className="lg:col-span-1">
+    <div className="space-y-6">
+      {/* Main Content Area */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Left Panel - Criteria */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Search className="w-5 h-5" />
-              <span>Define Criteria</span>
+              <span>Explore Trends</span>
             </CardTitle>
             <CardDescription>
-              Set your parameters and ask AI about market trends
+              Set your parameters and discover AI-powered market opportunities
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -248,7 +279,7 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
                 id="query_text"
                 value={formData.query_text}
                 onChange={(e) => handleInputChange('query_text', e.target.value)}
-                placeholder="e.g., What's next in sustainable manufacturing for small-scale producers in the USA?"
+                placeholder="e.g., What are the trending opportunities in sustainable packaging for US manufacturers?"
                 rows={4}
               />
             </div>
@@ -264,160 +295,191 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onEvent }) => {
             </Button>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Results Panel */}
-      <div className="lg:col-span-2 space-y-6">
-        {opportunities.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5" />
-                <span>AI-Powered Opportunities</span>
+        {/* Right Panel - Criteria Summary and Results */}
+        <div className="space-y-6">
+          {/* Active Criteria Display */}
+          <Card className="bg-muted/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center space-x-2">
+                <Target className="w-4 h-4" />
+                <span>Active Search Criteria</span>
               </CardTitle>
-              <CardDescription>
-                Ranked insights from Gemini AI based on your criteria
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {opportunities.map((opportunity) => (
-                  <Card key={opportunity.rank} className="border-border/50 hover:border-primary/30 transition-colors">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Badge variant="outline" className="px-2 py-1">
-                              #{opportunity.rank}
-                            </Badge>
-                            <div className="flex items-center space-x-1">
-                              <Star className="w-4 h-4 text-accent" />
-                              <span className="text-sm font-medium text-accent">{opportunity.score}%</span>
-                            </div>
-                          </div>
-                          <h4 className="font-semibold text-lg text-foreground mb-1">
-                            {opportunity.title}
-                          </h4>
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-3">
-                            <div className="flex items-center space-x-1">
-                              <Building className="w-3 h-3" />
-                              <span>{opportunity.product_category}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <MapPin className="w-3 h-3" />
-                              <span>{opportunity.geography}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+              <div className="space-y-2 text-sm">
+                {formData.location && (
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="w-3 h-3 text-primary" />
+                    <span className="text-muted-foreground">Location:</span>
+                    <span className="text-foreground font-medium">{formData.location}</span>
+                  </div>
+                )}
+                {formData.budget && (
+                  <div className="flex items-center space-x-2">
+                    <DollarSign className="w-3 h-3 text-success" />
+                    <span className="text-muted-foreground">Budget:</span>
+                    <span className="text-foreground font-medium">{formData.budget}</span>
+                  </div>
+                )}
+                {formData.target_brands && (
+                  <div className="flex items-center space-x-2">
+                    <Building className="w-3 h-3 text-warning" />
+                    <span className="text-muted-foreground">Target Brands:</span>
+                    <span className="text-foreground font-medium">{formData.target_brands}</span>
+                  </div>
+                )}
+                {!formData.location && !formData.budget && !formData.target_brands && (
+                  <p className="text-muted-foreground italic">Set criteria on the left to see them here</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-                      <div className="space-y-4">
-                        <div>
-                          <h5 className="font-medium text-foreground mb-2">Why this opportunity?</h5>
-                          <p className="text-sm text-muted-foreground">{opportunity.why}</p>
-                        </div>
-
-                        <div>
-                          <h5 className="font-medium text-foreground mb-2">Next Steps</h5>
-                          <ul className="space-y-1">
-                            {opportunity.steps.slice(0, 3).map((step, index) => (
-                              <li key={index} className="text-sm text-muted-foreground flex items-start space-x-2">
-                                <span className="text-primary font-medium">{index + 1}.</span>
-                                <span>{step}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                          <div>
-                            <span className="text-xs text-muted-foreground mr-2">Key Brands:</span>
-                            {opportunity.suggested_brands.slice(0, 3).map((brand, index) => (
-                              <Badge key={index} variant="outline" className="mr-1 text-xs">
-                                {brand}
+          {/* Results Section */}
+          {opportunities.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5" />
+                  <span>AI-Powered Opportunities</span>
+                </CardTitle>
+                <CardDescription>
+                  Ranked insights from Gemini AI based on your criteria
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+                  {opportunities.map((opportunity) => (
+                    <Card key={opportunity.rank} className="border-border/50 hover:border-primary/30 transition-colors">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <Badge variant="outline" className="px-2 py-1 text-xs">
+                                #{opportunity.rank}
                               </Badge>
-                            ))}
+                              <div className="flex items-center space-x-1">
+                                <Star className="w-4 h-4 text-accent" />
+                                <span className="text-sm font-medium text-accent">{opportunity.score}%</span>
+                              </div>
+                            </div>
+                            <h4 className="font-semibold text-base text-foreground mb-1 line-clamp-2">
+                              {opportunity.title}
+                            </h4>
+                            <div className="flex items-center space-x-3 text-sm text-muted-foreground mb-2">
+                              <div className="flex items-center space-x-1">
+                                <Building className="w-3 h-3" />
+                                <span className="truncate">{opportunity.product_category}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <MapPin className="w-3 h-3" />
+                                <span className="truncate">{opportunity.geography}</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-4 border-t border-border/30">
-                          <div className="flex space-x-2">
+                        <div className="space-y-3">
+                          <div>
+                            <h5 className="font-medium text-sm text-foreground mb-1">Why this opportunity?</h5>
+                            <p className="text-xs text-muted-foreground line-clamp-2">{opportunity.why}</p>
+                          </div>
+
+                          <div>
+                            <h5 className="font-medium text-sm text-foreground mb-1">Next Steps</h5>
+                            <ul className="space-y-1">
+                              {opportunity.steps.slice(0, 2).map((step, index) => (
+                                <li key={index} className="text-xs text-muted-foreground flex items-start space-x-2">
+                                  <span className="text-primary font-medium">{index + 1}.</span>
+                                  <span className="line-clamp-1">{step}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                            <div className="flex space-x-1">
+                              <Button
+                                variant="analytics"
+                                size="sm"
+                                className="text-xs px-2 py-1"
+                                onClick={() => handleAction('save', opportunity)}
+                              >
+                                <BookmarkPlus className="w-3 h-3 mr-1" />
+                                Save
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-xs px-2 py-1"
+                                onClick={() => handleAction('view_suppliers', opportunity)}
+                              >
+                                <Eye className="w-3 h-3 mr-1" />
+                                Suppliers
+                              </Button>
+                            </div>
                             <Button
-                              variant="analytics"
+                              variant="ghost"
                               size="sm"
-                              onClick={() => handleAction('save', opportunity)}
+                              className="text-xs px-2 py-1"
+                              onClick={() => handleAction('show_map', opportunity)}
                             >
-                              <BookmarkPlus className="w-3 h-3 mr-1" />
-                              Save
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleAction('view_suppliers', opportunity)}
-                            >
-                              <Eye className="w-3 h-3 mr-1" />
-                              Suppliers
+                              <Globe className="w-3 h-3 mr-1" />
+                              Map
                             </Button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleAction('show_map', opportunity)}
-                          >
-                            <Globe className="w-3 h-3 mr-1" />
-                            Map
-                          </Button>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-        {opportunities.length === 0 && !loading && (
-          <Card className="bg-gradient-to-br from-primary/5 via-transparent to-primary/10 border-primary/20">
-            <CardContent className="p-12 text-center">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent rounded-full blur-3xl"></div>
-                <Sparkles className="relative w-20 h-20 mx-auto mb-6 text-primary animate-pulse" />
-              </div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-deep bg-clip-text text-transparent mb-3">
-                🚀 Ready to Explore Market Trends?
-              </h3>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-                Unleash the power of AI to discover emerging opportunities perfectly tailored to your business capabilities and market interests. Get actionable insights in seconds.
-              </p>
-              <div className="flex flex-wrap justify-center gap-3 mb-6">
-                <Badge variant="outline" className="px-4 py-2 bg-background/50 backdrop-blur-sm">
-                  🤖 AI-Powered Analysis
-                </Badge>
-                <Badge variant="outline" className="px-4 py-2 bg-background/50 backdrop-blur-sm">
-                  📊 Real-time Insights
-                </Badge>
-                <Badge variant="outline" className="px-4 py-2 bg-background/50 backdrop-blur-sm">
-                  ⚡ Actionable Steps
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+          {opportunities.length === 0 && !loading && (
+            <Card className="bg-gradient-to-br from-primary/5 via-transparent to-primary/10 border-primary/20">
+              <CardContent className="p-8 text-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent rounded-full blur-3xl"></div>
+                  <Sparkles className="relative w-16 h-16 mx-auto mb-4 text-primary animate-pulse" />
+                </div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-deep bg-clip-text text-transparent mb-2">
+                  🚀 Ready to Explore Market Trends?
+                </h3>
+                <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
+                  Discover emerging opportunities tailored to your business capabilities and market interests. Get actionable insights in seconds.
+                </p>
+                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                  <Badge variant="outline" className="px-3 py-1 bg-background/50 backdrop-blur-sm text-xs">
+                    🤖 AI-Powered Analysis
+                  </Badge>
+                  <Badge variant="outline" className="px-3 py-1 bg-background/50 backdrop-blur-sm text-xs">
+                    📊 Real-time Insights
+                  </Badge>
+                  <Badge variant="outline" className="px-3 py-1 bg-background/50 backdrop-blur-sm text-xs">
+                    ⚡ Actionable Steps
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-        {loading && (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <RefreshCw className="w-8 h-8 mx-auto mb-4 animate-spin text-primary" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                Analyzing Market Trends...
-              </h3>
-              <p className="text-muted-foreground">
-                Gemini AI is processing your query and market data
-              </p>
-            </CardContent>
-          </Card>
-        )}
+          {loading && (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <RefreshCw className="w-6 h-6 mx-auto mb-3 animate-spin text-primary" />
+                <h3 className="text-base font-semibold text-foreground mb-1">
+                  Analyzing Market Trends...
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Gemini AI is processing your query and market data
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

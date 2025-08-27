@@ -263,78 +263,99 @@ const Dashboard = () => {
                   </Card>
                 </div>
 
-                {/* Geography and Personal Opportunities Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Geographic Opportunities */}
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="w-5 h-5 text-primary" />
-                          <span>Geographic Opportunities</span>
-                        </div>
-                        <Badge variant="secondary" className="text-xs">
-                          {locationOpportunities.length} markets
-                        </Badge>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3 max-h-80 overflow-y-auto">
-                        {locationOpportunities.map((opportunity) => (
-                          <LocationOpportunityCard
-                            key={opportunity.rec_id}
-                            opportunity={opportunity}
-                            userId={DEMO_USER_ID}
-                            onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
-                          />
-                        ))}
-                        
-                        {locationOpportunities.length === 0 && (
-                          <div className="text-center py-8 text-muted-foreground">
-                            <MapPin className="w-12 h-12 mx-auto mb-4 opacity-40" />
-                            <p>No geographic opportunities found.</p>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                {/* Sub-tabs for different opportunity types */}
+                <Tabs defaultValue="geographic" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="geographic" className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4" />
+                      <span>Geographic Opportunities</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="personal" className="flex items-center space-x-2">
+                      <Target className="w-4 h-4" />
+                      <span>Top Personal Opportunities</span>
+                    </TabsTrigger>
+                  </TabsList>
 
-                  {/* Personal Opportunities */}
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Target className="w-5 h-5 text-primary" />
-                          <span>Top Personal Opportunities</span>
-                        </div>
-                        <Badge variant="secondary" className="text-xs">
-                          {userOpportunities.length} matches
-                        </Badge>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3 max-h-80 overflow-y-auto">
-                        {userOpportunities
-                          .sort((a, b) => b.fit_score - a.fit_score)
-                          .map((opportunity) => (
-                            <UserOpportunityCard
+                  <TabsContent value="geographic" className="mt-6">
+                    <Card>
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-lg flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <MapPin className="w-5 h-5 text-primary" />
+                            <span>Geographic Market Opportunities</span>
+                          </div>
+                          <Badge variant="secondary" className="text-sm">
+                            {locationOpportunities.length} markets
+                          </Badge>
+                        </CardTitle>
+                        <CardDescription>
+                          Location-based opportunities with high market demand and growth potential
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid gap-4 max-h-[60vh] overflow-y-auto pr-2">
+                          {locationOpportunities.map((opportunity) => (
+                            <LocationOpportunityCard
                               key={opportunity.rec_id}
                               opportunity={opportunity}
                               userId={DEMO_USER_ID}
                               onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
                             />
                           ))}
-                        
-                        {userOpportunities.length === 0 && (
-                          <div className="text-center py-8 text-muted-foreground">
-                            <Target className="w-12 h-12 mx-auto mb-4 opacity-40" />
-                            <p>No personal opportunities found.</p>
+                          
+                          {locationOpportunities.length === 0 && (
+                            <div className="text-center py-12 text-muted-foreground">
+                              <MapPin className="w-16 h-16 mx-auto mb-4 opacity-40" />
+                              <h3 className="text-lg font-medium mb-2">No Geographic Opportunities</h3>
+                              <p>We're analyzing market data to find location-based opportunities for you.</p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  <TabsContent value="personal" className="mt-6">
+                    <Card>
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-lg flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Target className="w-5 h-5 text-primary" />
+                            <span>Personalized Opportunities</span>
                           </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                          <Badge variant="secondary" className="text-sm">
+                            {userOpportunities.length} matches
+                          </Badge>
+                        </CardTitle>
+                        <CardDescription>
+                          Tailored recommendations based on your profile, capabilities, and market fit
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid gap-4 max-h-[60vh] overflow-y-auto pr-2">
+                          {userOpportunities
+                            .sort((a, b) => b.fit_score - a.fit_score)
+                            .map((opportunity) => (
+                              <UserOpportunityCard
+                                key={opportunity.rec_id}
+                                opportunity={opportunity}
+                                userId={DEMO_USER_ID}
+                                onAction={(action) => logEvent(action, { rec_id: opportunity.rec_id })}
+                              />
+                            ))}
+                          
+                          {userOpportunities.length === 0 && (
+                            <div className="text-center py-12 text-muted-foreground">
+                              <Target className="w-16 h-16 mx-auto mb-4 opacity-40" />
+                              <h3 className="text-lg font-medium mb-2">No Personal Opportunities</h3>
+                              <p>Complete your profile to get personalized recommendations.</p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
             </div>
           </TabsContent>
 

@@ -10,7 +10,10 @@ import {
   MapPin, 
   Target, 
   Users,
-  User
+  User,
+  Sparkles,
+  MessageSquare,
+  Search
 } from 'lucide-react';
 import OpportunityMap from '@/components/OpportunityMap';
 import LocationOpportunityCard from '@/components/LocationOpportunityCard';
@@ -220,7 +223,7 @@ const Dashboard = () => {
                 value="profile"
                 className="px-6 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm"
               >
-                Profile & Docs
+                About you
               </TabsTrigger>
             </TabsList>
           </div>
@@ -293,7 +296,7 @@ const Dashboard = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="grid gap-4 max-h-[60vh] overflow-y-auto pr-2">
+                        <div className="grid lg:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-2">
                           {locationOpportunities.map((opportunity) => (
                             <LocationOpportunityCard
                               key={opportunity.rec_id}
@@ -332,7 +335,7 @@ const Dashboard = () => {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="grid gap-4 max-h-[60vh] overflow-y-auto pr-2">
+                        <div className="grid lg:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-2">
                           {userOpportunities
                             .sort((a, b) => b.fit_score - a.fit_score)
                             .map((opportunity) => (
@@ -360,9 +363,53 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="trends" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <TrendChat userId={DEMO_USER_ID} userLocation={userProfile?.location} />
-              <TrendExplorer onEvent={logEvent} />
+            <div className="space-y-6">
+              {/* Header Section */}
+              <Card className="bg-gradient-to-br from-primary/5 via-transparent to-primary/10 border-primary/20">
+                <CardContent className="p-8 text-center">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent rounded-full blur-3xl"></div>
+                    <Sparkles className="relative w-16 h-16 mx-auto mb-4 text-primary animate-pulse" />
+                  </div>
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-deep bg-clip-text text-transparent mb-2">
+                    🚀 Ready to Explore Market Trends?
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto leading-relaxed">
+                    Discover emerging opportunities tailored to your business capabilities and market interests. Get actionable insights in seconds.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Badge variant="outline" className="px-3 py-1 bg-background/50 backdrop-blur-sm text-xs">
+                      🤖 AI-Powered Analysis
+                    </Badge>
+                    <Badge variant="outline" className="px-3 py-1 bg-background/50 backdrop-blur-sm text-xs">
+                      📊 Real-time Insights
+                    </Badge>
+                    <Badge variant="outline" className="px-3 py-1 bg-background/50 backdrop-blur-sm text-xs">
+                      ⚡ Actionable Steps
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Sub-tabs */}
+              <Tabs defaultValue="advisor" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="advisor" className="flex items-center space-x-2">
+                    <MessageSquare className="w-4 h-4" />
+                    <span>KeyAI Trend Advisor</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="explore" className="flex items-center space-x-2">
+                    <Search className="w-4 h-4" />
+                    <span>Explore in Detail</span>
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="advisor" className="mt-0">
+                  <TrendChat userId={DEMO_USER_ID} userLocation={userProfile?.location} />
+                </TabsContent>
+                <TabsContent value="explore" className="mt-0">
+                  <TrendExplorer onEvent={logEvent} />
+                </TabsContent>
+              </Tabs>
             </div>
           </TabsContent>
 

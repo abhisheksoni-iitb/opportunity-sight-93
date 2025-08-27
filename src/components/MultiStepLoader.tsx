@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
 
 interface MultiStepLoaderProps {
@@ -41,14 +41,14 @@ const MultiStepLoader: React.FC<MultiStepLoaderProps> = ({ isOpen, onClose }) =>
             <div className="absolute inset-0 rounded-full border-2 border-primary/20"></div>
           </div>
           
-          <div className="text-center space-y-2">
-            <h3 className="text-lg font-semibold text-foreground">
+          <DialogHeader className="text-center space-y-2">
+            <DialogTitle className="text-lg font-semibold text-foreground">
               KeyAI is thinking...
-            </h3>
-            <p className="text-muted-foreground text-sm">
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-sm">
               {loadingSteps[currentStep]}
-            </p>
-          </div>
+            </DialogDescription>
+          </DialogHeader>
           
           <div className="flex space-x-1">
             {Array.from({ length: 3 }).map((_, i) => (

@@ -128,6 +128,13 @@ const TrendChat: React.FC<TrendChatProps> = ({ userId, userLocation }) => {
     });
   };
 
+  const getDefaultSuppliers = () => [
+    { name: 'TechManufacturing Corp', location: 'California, USA', speciality: 'Advanced Electronics' },
+    { name: 'GlobalParts Ltd', location: 'Texas, USA', speciality: 'Component Supply' },
+    { name: 'InnovateSupply Co', location: 'New York, USA', speciality: 'Raw Materials' },
+    { name: 'Industrial Solutions Inc', location: 'Illinois, USA', speciality: 'Manufacturing Equipment' }
+  ];
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -186,19 +193,29 @@ const TrendChat: React.FC<TrendChatProps> = ({ userId, userLocation }) => {
                           <div dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }} />
                         </div>
                         
-                        {/* Render supplier cards if present in assistant messages */}
-                        {message.role === 'assistant' && message.content.includes('SUPPLIER:') && (
+                        {/* Always render supplier cards for assistant messages */}
+                        {message.role === 'assistant' && (
                           <div className="mt-4">
                             <h4 className="text-sm font-semibold mb-3 text-foreground">🤝 Connect with suppliers for this opportunity</h4>
                             <div className="grid grid-cols-1 gap-2">
-                              {extractSuppliers(message.content).map((supplier, index) => (
-                                <SupplierCard
-                                  key={index}
-                                  name={supplier.name}
-                                  location={supplier.location}
-                                  speciality={supplier.speciality}
-                                />
-                              ))}
+                              {message.content.includes('SUPPLIER:') 
+                                ? extractSuppliers(message.content).map((supplier, index) => (
+                                    <SupplierCard
+                                      key={index}
+                                      name={supplier.name}
+                                      location={supplier.location}
+                                      speciality={supplier.speciality}
+                                    />
+                                  ))
+                                : getDefaultSuppliers().map((supplier, index) => (
+                                    <SupplierCard
+                                      key={index}
+                                      name={supplier.name}
+                                      location={supplier.location}
+                                      speciality={supplier.speciality}
+                                    />
+                                  ))
+                              }
                             </div>
                           </div>
                         )}

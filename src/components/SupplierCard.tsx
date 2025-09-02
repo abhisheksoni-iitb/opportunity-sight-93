@@ -52,7 +52,7 @@ const SupplierCard: React.FC<SupplierCardProps> = ({
         
         <Button size="sm" variant="outline" className="w-full">
           <ExternalLink className="w-3 h-3 mr-2" />
-          Connect
+          Connect me to supplier
         </Button>
       </CardContent>
     </Card>

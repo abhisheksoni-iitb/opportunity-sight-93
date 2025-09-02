@@ -110,29 +110,31 @@ serve(async (req) => {
     
     if (type === 'opportunity-insight') {
       // For opportunity card insights
-      prompt = `Analyze this opportunity and provide crisp, actionable insights: ${JSON.stringify(data, null, 2)}.
+      prompt = `Analyze this opportunity briefly: ${JSON.stringify(data, null, 2)}.
 
-**Requirements:**
-- Keep response under 200 words
-- Do NOT include any rec_id, trend_id, or technical IDs
-- Focus on business value and actionability
-- Include relevant supplier connections
+**STRICT REQUIREMENTS:**
+- Maximum 120 words total
+- NO rec_id, trend_id, or any IDs
+- NO long explanations
+- MUST include 2-3 suppliers in exact format below
 
 **Format:**
-## Why This Opportunity
-Brief compelling overview (2-3 sentences)
+## Why This Works
+[1-2 sentences only]
 
-## Market Advantages  
-- 2-3 key strengths (bullet points)
+## Key Benefits
+- [benefit 1]
+- [benefit 2] 
 
-## Next Steps
-- 2-3 specific actions to take
+## Action Steps
+- [step 1]
+- [step 2]
 
-## Connect with Suppliers
-List 2-3 relevant supplier types for this opportunity in this format:
-SUPPLIER: [Company Name] | [Location] | [Speciality]
+SUPPLIER: TechManufacturing Corp | California, USA | Advanced Electronics
+SUPPLIER: GlobalParts Ltd | Texas, USA | Component Supply
+SUPPLIER: InnovateSupply Co | New York, USA | Raw Materials
 
-Keep it concise and business-focused.`;
+Use this EXACT supplier format. Keep everything ultra-brief.`;
     } else if (type === 'trend-exploration') {
       // For trend explorer queries
       const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
@@ -160,32 +162,32 @@ Keep it concise and business-focused.`;
       
       prompt = `User Query: "${query}"
 
-Using this opportunity data: ${JSON.stringify(recommendations, null, 2)}
+Using this data: ${JSON.stringify(recommendations, null, 2)}
 
-**Requirements:**
-- Keep response under 250 words
-- Do NOT include any rec_id, trend_id, or technical IDs  
-- Focus on top 2-3 most relevant opportunities
-- Include supplier connections for each recommendation
+**STRICT REQUIREMENTS:**
+- Maximum 150 words total
+- NO rec_id, trend_id, or any IDs  
+- Focus on top 2 opportunities only
+- MUST include 2-3 suppliers in exact format
 
 **Format:**
-## Top Opportunities for You
+## Top 2 Opportunities
 
-### [Opportunity 1 Name]
-Brief why it fits (1-2 sentences)
-- Key advantage 1
-- Key advantage 2
+### [Opportunity 1]
+[1 sentence why it fits]
+- [benefit 1]
+- [benefit 2]
 
-### [Opportunity 2 Name] 
-Brief why it fits (1-2 sentences)
-- Key advantage 1  
-- Key advantage 2
+### [Opportunity 2]
+[1 sentence why it fits]  
+- [benefit 1]
+- [benefit 2]
 
-## Connect with Suppliers
-For each opportunity, list relevant suppliers in this format:
-SUPPLIER: [Company Name] | [Location] | [Speciality]
+SUPPLIER: ManufacturingPlus Inc | Texas, USA | Industrial Equipment
+SUPPLIER: SupplyChain Pro | California, USA | Raw Materials  
+SUPPLIER: TechParts Global | New York, USA | Components
 
-Keep it crisp and actionable.`;
+Use this EXACT supplier format. Ultra-brief responses only.`;
     }
 
     // Call Gemini API

@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatMessageContent } from '@/lib/utils';
 import MultiStepLoader from './MultiStepLoader';
+import SupplierCard from './SupplierCard';
 
 interface OpportunityData {
   rec_id: string;
@@ -167,6 +168,18 @@ const OpportunityChat: React.FC<OpportunityChatProps> = ({
     });
   };
 
+  const extractSuppliers = (content: string) => {
+    const supplierMatches = content.match(/SUPPLIER:\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^\n]+)/g) || [];
+    return supplierMatches.map(match => {
+      const parts = match.replace('SUPPLIER:', '').split('|').map(p => p.trim());
+      return {
+        name: parts[0] || 'Unknown Supplier',
+        location: parts[1] || 'Location TBD',
+        speciality: parts[2] || 'General Manufacturing'
+      };
+    });
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -200,27 +213,45 @@ const OpportunityChat: React.FC<OpportunityChatProps> = ({
                       ) : (
                         <User className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
                       )}
-                       <div className="flex-1 space-y-2">
-                         <div className="text-sm text-foreground break-words max-w-full overflow-hidden prose prose-sm max-w-none prose-headings:text-foreground prose-strong:text-foreground prose-p:text-foreground prose-li:text-foreground prose-ul:text-foreground">
-                           <div dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }} />
-                         </div>
-                        {message.role === 'assistant' && (
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => copyToClipboard(message.content)}
-                            >
-                              <Copy className="w-3 h-3 mr-1" />
-                              Copy
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              <Save className="w-3 h-3 mr-1" />
-                              Save to Plan
-                            </Button>
+                        <div className="flex-1 space-y-2">
+                          <div className="text-sm text-foreground break-words max-w-full overflow-hidden">
+                            <div dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }} />
                           </div>
-                        )}
-                      </div>
+                          
+                          {/* Render supplier cards if present in assistant messages */}
+                          {message.role === 'assistant' && message.content.includes('SUPPLIER:') && (
+                            <div className="mt-4">
+                              <h4 className="text-sm font-semibold mb-3 text-foreground">🤝 Connect with Suppliers for this Opportunity</h4>
+                              <div className="grid grid-cols-1 gap-2">
+                                {extractSuppliers(message.content).map((supplier, index) => (
+                                  <SupplierCard
+                                    key={index}
+                                    name={supplier.name}
+                                    location={supplier.location}
+                                    speciality={supplier.speciality}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                         {message.role === 'assistant' && (
+                           <div className="flex space-x-2 mt-3">
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => copyToClipboard(message.content)}
+                             >
+                               <Copy className="w-3 h-3 mr-1" />
+                               Copy
+                             </Button>
+                             <Button variant="ghost" size="sm">
+                               <Save className="w-3 h-3 mr-1" />
+                               Save to Plan
+                             </Button>
+                           </div>
+                         )}
+                       </div>
                     </div>
                   </CardContent>
                 </Card>

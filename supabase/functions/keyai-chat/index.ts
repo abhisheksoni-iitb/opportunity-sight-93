@@ -110,17 +110,29 @@ serve(async (req) => {
     
     if (type === 'opportunity-insight') {
       // For opportunity card insights
-      prompt = `Help the user understand this opportunity better, expand on it using this data: ${JSON.stringify(data, null, 2)}.
+      prompt = `Analyze this opportunity and provide crisp, actionable insights: ${JSON.stringify(data, null, 2)}.
 
-Make the output persuasive and insightful, highlighting why this opportunity is particularly promising for the user and which aspects make it a fit.
+**Requirements:**
+- Keep response under 200 words
+- Do NOT include any rec_id, trend_id, or technical IDs
+- Focus on business value and actionability
+- Include relevant supplier connections
 
-Format your response with:
-- A compelling overview of why this opportunity stands out
-- Key strengths and market advantages (use bullet points)
-- Specific next steps and actions the user can take
-- Market insights and potential returns
+**Format:**
+## Why This Opportunity
+Brief compelling overview (2-3 sentences)
 
-Keep the tone professional yet engaging.`;
+## Market Advantages  
+- 2-3 key strengths (bullet points)
+
+## Next Steps
+- 2-3 specific actions to take
+
+## Connect with Suppliers
+List 2-3 relevant supplier types for this opportunity in this format:
+SUPPLIER: [Company Name] | [Location] | [Speciality]
+
+Keep it concise and business-focused.`;
     } else if (type === 'trend-exploration') {
       // For trend explorer queries
       const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
@@ -146,19 +158,34 @@ Keep the tone professional yet engaging.`;
       };
       
       
-      prompt = `User has asked this: "${query}".
+      prompt = `User Query: "${query}"
 
-Use this opportunity data to provide the best, most convincing and actionable answer: ${JSON.stringify(recommendations, null, 2)}
+Using this opportunity data: ${JSON.stringify(recommendations, null, 2)}
 
-Give the best, most convincing and actionable answer you can, referencing the opportunity data and providing clear reasoning.
+**Requirements:**
+- Keep response under 250 words
+- Do NOT include any rec_id, trend_id, or technical IDs  
+- Focus on top 2-3 most relevant opportunities
+- Include supplier connections for each recommendation
 
-Format your response with:
-- Top trend/opportunity recommendations with tailored explanations
-- "Why this fits" section with specific reasoning
-- "Action Steps" with concrete next steps
-- "Data evidence" citing specific opportunities from the data
+**Format:**
+## Top Opportunities for You
 
-Make it conversational and helpful, focusing on actionable insights.`;
+### [Opportunity 1 Name]
+Brief why it fits (1-2 sentences)
+- Key advantage 1
+- Key advantage 2
+
+### [Opportunity 2 Name] 
+Brief why it fits (1-2 sentences)
+- Key advantage 1  
+- Key advantage 2
+
+## Connect with Suppliers
+For each opportunity, list relevant suppliers in this format:
+SUPPLIER: [Company Name] | [Location] | [Speciality]
+
+Keep it crisp and actionable.`;
     }
 
     // Call Gemini API

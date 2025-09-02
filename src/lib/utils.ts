@@ -8,38 +8,42 @@ export function cn(...inputs: ClassValue[]) {
 // Helper function to format message content with proper markdown rendering
 export const formatMessageContent = (content: string): string => {
   return content
+    // Convert ### headers to h3
+    .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold mt-4 mb-2 text-foreground">$1</h3>')
+    // Convert ## headers to h2  
+    .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold mt-4 mb-2 text-foreground">$1</h2>')
+    // Convert # headers to h1
+    .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mt-4 mb-3 text-foreground">$1</h1>')
     // Convert **bold** to <strong>
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
     // Convert *italic* to <em>
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    // Convert bullet points with * to proper list items
-    .replace(/^\*\s+(.+)$/gm, '<li>$1</li>')
-    // Wrap consecutive list items in <ul>
-    .replace(/(<li>.*<\/li>)/gs, (match) => {
-      const items = match.split('</li>').filter(item => item.trim()).map(item => item + '</li>');
-      return '<ul class="list-disc pl-4 space-y-1">' + items.join('') + '</ul>';
-    })
+    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+    // Convert bullet points with - or * to proper list items
+    .replace(/^[-*]\s+(.+)$/gm, '<li class="mb-1">$1</li>')
     // Convert numbered lists
-    .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
-    // Wrap consecutive numbered list items in <ol>
-    .replace(/(<li>.*<\/li>)/gs, (match, p1, offset, string) => {
-      // Check if this is part of a numbered list by looking at the original content
-      const beforeMatch = string.substring(0, offset);
-      const afterMatch = string.substring(offset + match.length);
-      if (beforeMatch.match(/\d+\.\s+/) || afterMatch.match(/^\d+\.\s+/m)) {
-        return '<ol class="list-decimal pl-4 space-y-1">' + match + '</ol>';
+    .replace(/^\d+\.\s+(.+)$/gm, '<li class="mb-1">$1</li>')
+    // Handle line breaks and paragraphs
+    .split('\n\n')
+    .map(paragraph => {
+      // If paragraph contains list items, wrap in appropriate list
+      if (paragraph.includes('<li')) {
+        const listItems = paragraph.match(/<li[^>]*>.*?<\/li>/g);
+        if (listItems) {
+          // Check if it's a bullet list or numbered list by looking at original content
+          const isBulletList = paragraph.includes('- ') || paragraph.includes('* ');
+          const listClass = isBulletList ? 'list-disc' : 'list-decimal';
+          return `<ul class="${listClass} pl-6 space-y-1 mb-4">${listItems.join('')}</ul>`;
+        }
       }
-      return match;
+      // Regular paragraph
+      if (paragraph.trim() && !paragraph.includes('<h') && !paragraph.includes('<ul') && !paragraph.includes('<ol')) {
+        return `<p class="mb-3 text-foreground leading-relaxed">${paragraph.trim()}</p>`;
+      }
+      return paragraph;
     })
-    // Convert line breaks to <br> for better formatting
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>')
-    // Wrap in paragraph tags
-    .replace(/^(.+)/, '<p>$1')
-    .replace(/(.+)$/, '$1</p>')
-    // Clean up any double paragraph tags
-    .replace(/<\/p><p>/g, '</p><p>')
-    // Fix list formatting issues
-    .replace(/<p>(<[uo]l)/g, '$1')
-    .replace(/(<\/[uo]l>)<\/p>/g, '$1');
+    .join('')
+    // Clean up extra spacing
+    .replace(/\n+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 };

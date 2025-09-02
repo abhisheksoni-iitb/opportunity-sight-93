@@ -221,7 +221,7 @@ const OpportunityChat: React.FC<OpportunityChatProps> = ({
                           {/* Render supplier cards if present in assistant messages */}
                           {message.role === 'assistant' && message.content.includes('SUPPLIER:') && (
                             <div className="mt-4">
-                              <h4 className="text-sm font-semibold mb-3 text-foreground">🤝 Connect with Suppliers for this Opportunity</h4>
+                              <h4 className="text-sm font-semibold mb-3 text-foreground">🤝 Connect with suppliers for this opportunity</h4>
                               <div className="grid grid-cols-1 gap-2">
                                 {extractSuppliers(message.content).map((supplier, index) => (
                                   <SupplierCard

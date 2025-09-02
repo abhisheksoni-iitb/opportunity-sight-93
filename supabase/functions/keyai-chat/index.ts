@@ -207,7 +207,7 @@ Use this EXACT supplier format. Ultra-brief responses only.`;
           temperature: 0.7,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 2048,
+          maxOutputTokens: 1024,
         }
       }),
     });
